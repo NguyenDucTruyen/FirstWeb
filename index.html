@@ -4,11 +4,73 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
+		<style>
+			.container {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+			}
+			.product-item {
+				display: flex;
+				width: 200px;
+				flex-direction: column;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 10px;
+				gap: 10px;
+			}
+			img {
+				width: 90%;
+			}
+			.title {
+				font-size: 18px;
+			}
+			.description {
+				font-size: 12px;
+			}
+			.product-info {
+			}
+		</style>
 	</head>
 	<body>
-		<span>Dem:</span>
-		<h1>Runing...</h1>
-		<button>Finish</button>
-		<script src="./main.js"></script>
+		<div class="container"></div>
+		<button onclick="loadMore()">Load More</button>
+		<script>
+			const container = document.querySelector(".container");
+			async function loadProducts(limit) {
+				showLoading();
+				const res = await fetch(`https://fakestoreapi.com/products?limit=${limit}`);
+				const products = await res.json();
+
+				const HTML = products
+					.map((item) => {
+						return `<div class="product-item">
+							<img src="${item.image}" alt="" />
+							<div class="product-info">
+								<div class="title">${item.title}</div>
+								<div class="description">
+									${item.description}
+								</div>
+								<div class="category">${item.category}</div>
+								<div class="price">${item.price}</div>
+								<div class="vote">${item.rating.rate}</div>
+							</div>
+							<button>Add to cart</button>
+						</div>`;
+					})
+					.join("");
+				container.innerHTML = HTML;
+			}
+			let limit = 5;
+			loadProducts(limit);
+			function loadMore() {
+				limit += 5;
+				loadProducts(limit);
+			}
+
+			function showLoading() {
+				container.innerHTML = "Loading...";
+			}
+		</script>
 	</body>
 </html>
